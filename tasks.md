@@ -59,30 +59,30 @@ SELECT COUNT (DISTINCT hometeam) FROM matches WHERE division_code = 'F1' OR divi
 
 ```sql
 
-SELECT * FROM matches WHERE (hometeam = 'Swansea' AND awayteam = 'Huddersfield') OR (hometeam = 'Huddersfield' AND awayteam = 'Swansea');
+SELECT * FROM matches WHERE (hometeam = 'Huddersfield' AND awayteam = 'Swansea');
 
 
--- Yes:12x
+-- Yes:6x
 ```
 
 8) How many draws were there in the `Eredivisie` between 2010 and 2015?
 
 ```sql
 
-SELECT * FROM divisions WHERE `country` = 'Netherlands';
-SELECT COUNT(DISTINCT ftr) FROM matches
-WHERE division_code = 'N1' AND season BETWEEN 2010 AND 2015;
+SELECT code FROM divisions WHERE name = 'Eredivisie';
 
------3
+SELECT COUNT(*) FROM matches WHERE division_code = 'N1' AND ftr = 'D' AND season BETWEEN 2010 AND 2015;
+
+-----431
 
 ```
 
 9) Select the matches played in the Premier League in order of total goals scored (`fthg` + `ftag`) from highest to lowest. When two matches have the same total the match with more home goals (`fthg`) should come first. 
 
 ```sql
-SELECT *, (fthg + ftag) AS total_goals FROM matches
-WHERE division_code = 'E0'
-ORDER BY total_goals DESC, fthg DESC;
+SELECT code FROM divisions WHERE name = 'Premier League';
+
+SELECT * FROM matches WHERE division_code = 'E0' ORDER BY (fthg + ftag) DESC, fthg DESC;
 
 
 ```
@@ -90,9 +90,11 @@ ORDER BY total_goals DESC, fthg DESC;
 10) Find the name of the division in which the most goals were scored in a single season and the year in which it happened.
 
 ```sql
-<!-- Copy solution here -->
+SELECT division_code, season, SUM (fthg + ftag) FROM matches GROUP BY division_code, season ORDER BY sum DESC LIMIT 1;
 
+SELECT name FROM divisions WHERE code = 'EC';
 
+-- National League 
 ```
 
 ### Useful Resources
